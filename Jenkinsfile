@@ -18,7 +18,7 @@ pipeline {
                 sh '''
                     echo "Checking ScholarOS backend..."
 
-                    STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5478/api/health)
+                    STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://172.17.0.1:5478/api/health)
 
                     echo "Backend HTTP Status: $STATUS"
 
