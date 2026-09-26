@@ -13,7 +13,24 @@ pipeline {
                 echo 'Pipeline started successfully.'
             }
         }
+        stage('Backend Health Check') {
+            steps {
+                sh '''
+                    echo "Checking ScholarOS backend..."
 
+                    STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5478/api/health)
+
+                    echo "Backend HTTP Status: $STATUS"
+
+                    if [ "$STATUS" = "200" ]; then
+                        echo "✓ ScholarOS backend is healthy"
+                    else
+                        echo "✗ ScholarOS backend health check failed"
+                        exit 1
+                    fi
+                '''
+            }
+        }
         stage('Frontend Build') {
             steps {
                 dir('frontend') {
