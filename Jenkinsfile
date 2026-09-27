@@ -72,7 +72,7 @@ pipeline {
 
                     kubectl -n scholaros set image \
                       deployment/scholaros-app \
-                      scholaros=127.0.0.1:32770/scholaros:${BUILD_NUMBER}
+                      scholaros=registry.kube-system.svc.cluster.local/scholaros:${BUILD_NUMBER}
 
                     echo "Waiting for deployment rollout..."
 
