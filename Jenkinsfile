@@ -195,6 +195,25 @@ pipeline {
                         cat /tmp/scholaros-port-forward.log
                         exit 1
                     fi
-                '''
+                 '''
             }
         }
+    }
+
+    post {
+        success {
+            echo '=============================================='
+            echo 'BUILD SUCCESS'
+            echo '=============================================='
+            echo 'ScholarOS CI/CD pipeline completed successfully.'
+        }
+
+        failure {
+            echo '=============================================='
+            echo 'BUILD FAILURE'
+            echo '=============================================='
+            echo 'ScholarOS CI/CD pipeline failed.'
+            echo 'Check the failed stage and console output.'
+        }
+    }
+}
