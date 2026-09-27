@@ -161,45 +161,40 @@ pipeline {
                     echo "APPLICATION VERIFICATION"
                     echo "=============================================="
 
-                    echo "Checking ScholarOS application health..."
+                    echo "Checking ScholarOS Kubernetes service..."
 
-                    POD=$(kubectl -n scholaros get pod \
-                        -l app=scholaros-app \
-                        -o jsonpath='{.items[0].metadata.name}')
+                    kubectl -n scholaros port-forward \
+                        svc/scholaros-service 5478:5478 \
+                        > /tmp/scholaros-port-forward.log 2>&1 &
 
-                    echo "Selected application pod: $POD"
+                    PF_PID=$!
 
-                    STATUS=$(kubectl -n scholaros exec "$POD" -- \
-                        curl -s -o /dev/null -w "%{http_code}" \
-                        http://localhost:5478/api/health)
+                    trap 'kill $PF_PID 2>/dev/null || true' EXIT
+
+                    echo "Waiting for ScholarOS service..."
+
+                    for i in $(seq 1 20); do
+                        STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+                            http://127.0.0.1:5478/api/health || true)
+
+                        if [ "$STATUS" = "200" ]; then
+                            break
+                        fi
+
+                        sleep 2
+                    done
 
                     echo "Application HTTP Status: $STATUS"
 
                     if [ "$STATUS" = "200" ]; then
                         echo "✓ ScholarOS application is healthy"
+                        echo "✓ Kubernetes service verification SUCCESS"
                     else
                         echo "✗ ScholarOS application health verification failed"
+                        echo "Port-forward output:"
+                        cat /tmp/scholaros-port-forward.log
                         exit 1
                     fi
                 '''
             }
         }
-    }
-
-    post {
-        success {
-            echo '=============================================='
-            echo 'BUILD SUCCESS'
-            echo '=============================================='
-            echo 'ScholarOS CI/CD pipeline completed successfully.'
-        }
-
-        failure {
-            echo '=============================================='
-            echo 'BUILD FAILURE'
-            echo '=============================================='
-            echo 'ScholarOS CI/CD pipeline failed.'
-            echo 'Check the failed stage and console output.'
-        }
-    }
-}
