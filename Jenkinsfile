@@ -186,7 +186,7 @@ pipeline {
 
                     echo "Application HTTP Status: $STATUS"
 
-                    if [ "$STATUS" = "200" ]; then
+                    if [ "$STATUS" = "${EXPECTED_STATUS}" ]; then
                         echo "✓ ScholarOS application is healthy"
                         echo "✓ Kubernetes service verification SUCCESS"
                     else
