@@ -39,5 +39,20 @@ pipeline {
                 }
             }
         }
+        stage('Docker Build') {
+            steps {
+                sh '''
+                    echo "Building ScholarOS Docker image..."
+
+                    docker build -t scholaros:${BUILD_NUMBER} .
+
+                    docker tag scholaros:${BUILD_NUMBER} scholaros:latest
+
+                    echo "Docker image built successfully"
+                    docker images scholaros
+                '''
+            }
+        }
     }
 }
+
