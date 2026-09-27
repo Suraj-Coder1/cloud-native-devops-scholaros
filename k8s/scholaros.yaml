@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scholaros-app
+  namespace: scholaros
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: scholaros-app
+  template:
+    metadata:
+      labels:
+        app: scholaros-app
+    spec:
+      containers:
+        - name: scholaros
+          image: scholaros:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5478
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "5478"
+            - name: DATABASE_URL
+              value: "postgresql://hm_user:hmpass@scholaros-postgres:5432/hm_sms"
+            - name: JWT_SECRET
+              value: "scholaros-demo-secret-change-later"
+            - name: JWT_EXPIRES_IN
+              value: "7d"
+            - name: CORS_ORIGIN
+              value: "*"
+            - name: UPLOAD_DIR
+              value: "./uploads"
+            - name: MAX_FILE_SIZE_MB
+              value: "10"
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 5478
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 5478
+            initialDelaySeconds: 30
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: scholaros-service
+  namespace: scholaros
+spec:
+  selector:
+    app: scholaros-app
+  ports:
+    - port: 5478
+      targetPort: 5478
+  type: NodePort

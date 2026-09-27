@@ -9,6 +9,8 @@ RUN apt-get update \
     && npm --version \
     && node --version \
     && docker --version \
+    && groupadd -g 106 dockerhost \
+    && usermod -aG dockerhost jenkins \
     && rm -rf /var/lib/apt/lists/*
 
 USER jenkins
