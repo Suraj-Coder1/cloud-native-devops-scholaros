@@ -40,19 +40,23 @@ pipeline {
             }
         }
         stage('Docker Build') {
-            steps {
-                sh '''
-                    echo "Building ScholarOS Docker image..."
+    steps {
+        sh '''
+            echo "Building ScholarOS Docker image..."
 
-                    docker build -t scholaros:${BUILD_NUMBER} .
+            docker build -t scholaros:${BUILD_NUMBER} .
 
-                    docker tag scholaros:${BUILD_NUMBER} scholaros:latest
+            docker tag scholaros:${BUILD_NUMBER} 127.0.0.1:32770/scholaros:${BUILD_NUMBER}
 
-                    echo "Docker image built successfully"
-                    docker images scholaros
-                '''
-            }
-        }
+            echo "Pushing image to Minikube registry..."
+
+            docker push 127.0.0.1:32770/scholaros:${BUILD_NUMBER}
+
+            echo "Docker image built and pushed successfully"
+        '''
+    }
+}
+
         stage('Kubernetes Deployment') {
             when {
                 expression {
