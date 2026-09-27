@@ -31,7 +31,17 @@ app.use('/uploads', express.static(upDir));
 
 // Health
 app.get('/api/health', (req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));
-
+app.get('/api/deployment-info', (req, res) => {
+  res.json({
+    application: 'ScholarOS',
+    project: 'Cloud Native DevOps Automation System',
+    environment: process.env.NODE_ENV || 'development',
+    version: '1.0.0',
+    deployment: 'Kubernetes',
+    containerized: true,
+    timestamp: new Date().toISOString()
+  });
+});
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
