@@ -53,6 +53,30 @@ pipeline {
                 '''
             }
         }
+        stage('Kubernetes Deployment') {
+            when {
+                expression {
+                    return params.DEPLOY_TO_K8S
+                }
+            }
+            steps {
+                sh '''
+                    echo "Deploying ScholarOS to Kubernetes..."
+
+                    kubectl -n scholaros set image \
+                      deployment/scholaros-app \
+                      scholaros=scholaros:${BUILD_NUMBER}
+
+                    echo "Waiting for deployment rollout..."
+
+                    kubectl -n scholaros rollout status \
+                      deployment/scholaros-app \
+                      --timeout=180s
+
+                    echo "ScholarOS deployment completed successfully."
+                '''
+            }
+        }
     }
 }
 
