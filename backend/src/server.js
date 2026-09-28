@@ -36,7 +36,7 @@ app.get('/api/deployment-info', (req, res) => {
     application: 'ScholarOS',
     project: 'Cloud Native DevOps Automation System',
     environment: process.env.NODE_ENV || 'development',
-    version: '1.0.0',
+    version: '2.0.0',
     deployment: 'Kubernetes',
     containerized: true,
     timestamp: new Date().toISOString()
