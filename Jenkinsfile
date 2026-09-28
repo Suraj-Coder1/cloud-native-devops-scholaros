@@ -163,7 +163,7 @@ pipeline {
 
                     echo "Checking ScholarOS Kubernetes service..."
 
-                    kubectl -n scholaros port-forward \
+                    kubectl --kubeconfig=/var/jenkins_home/jenkins-kubeconfig -n scholaros port-forward \
                         svc/scholaros-service 5478:5478 \
                         > /tmp/scholaros-port-forward.log 2>&1 &
 
