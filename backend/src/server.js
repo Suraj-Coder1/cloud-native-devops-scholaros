@@ -5,7 +5,8 @@ const helmet = require('helmet');
 const path = require('path');
 const fs = require('fs');
 const rateLimit = require('express-rate-limit');
-
+const client = require('@prometheus-io/client');
+client.collectDefaultMetrics();
 const app = express();
 const PORT = parseInt(process.env.PORT || '5478');
 
@@ -41,6 +42,11 @@ app.get('/api/deployment-info', (req, res) => {
     containerized: true,
     timestamp: new Date().toISOString()
   });
+});
+// Prometheus metrics
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', client.register.contentType);
+  res.end(await client.register.metrics());
 });
 // Routes
 app.use('/api/auth', require('./routes/auth'));
