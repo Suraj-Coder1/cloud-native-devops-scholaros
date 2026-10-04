@@ -45,3 +45,6 @@ coverage/
 # pem / secrets — never commit
 *.pem
 *.key
+
+# reusable deployment configuration
+deploy-config/*.env
