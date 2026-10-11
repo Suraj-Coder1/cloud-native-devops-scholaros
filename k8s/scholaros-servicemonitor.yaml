@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: scholaros
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  namespaceSelector:
+    matchNames:
+      - scholaros
+  selector:
+    matchLabels:
+      monitoring: scholaros
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
